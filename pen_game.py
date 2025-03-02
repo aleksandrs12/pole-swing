@@ -29,7 +29,13 @@ cart_position = 400
 angular_velocity = 0
 pen_pos = [cart_position, 300 + 150]
 
+depth = 0
+
 while running:
+    depth += 1
+    if math.sin(math.radians(angle)) > 0.85:
+        print(depth)
+        1 / 0
     # Event handling
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -49,7 +55,9 @@ while running:
     dx = pen_pos[0] - cart_position
     dy = 300 - pen_pos[1]
     angle = math.degrees(math.atan2(dy, dx))
-    print(angle)
+    
+    angle = round(angle * 3) / 3
+    angular_velocity = round(angular_velocity * 4) / 4
     
     
 

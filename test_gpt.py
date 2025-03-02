@@ -11,7 +11,7 @@ model = PPO("MlpPolicy", env, verbose=1)
 print('Env loaded')
 
 # Train the model
-model.learn(total_timesteps=10000000)
+model.learn(total_timesteps=100000)
 
 # Save the trained model
 model.save("ppo_pendulum1")
