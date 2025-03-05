@@ -13,8 +13,7 @@ path_found = False
 max_sin = -1
 depth = 0
 while not path_found:
-    if depth % 10 == 0:
-        print(depth)
+    print(depth)
     depth += 1
     for n in range(len(positions)):
         if positions[n] in seen:

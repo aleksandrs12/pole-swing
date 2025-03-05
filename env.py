@@ -124,4 +124,6 @@ def calculate_next_state(state, action):
     state[1] = max(-59, state[1])
     state[0] = min(359, state[0])
     state[0] = max(0, state[0])
-    return discretize(state)
+
+    #state[3] += 1
+    return state
