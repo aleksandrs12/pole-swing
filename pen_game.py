@@ -34,8 +34,6 @@ depth = 0
 
 while running:
     depth += 1
-    if math.sin(math.radians(angle)) > 0.85:
-        print(depth)
     # Event handling
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -61,6 +59,7 @@ while running:
 
     if cart_position < 0 or cart_position > 800:
         cart_position = 400
+        pen_pos[0] = cart_position + pen_pos[0]
 
     dx = pen_pos[0] - cart_position
     dy = 300 - pen_pos[1]
