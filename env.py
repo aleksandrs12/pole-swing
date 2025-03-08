@@ -94,9 +94,12 @@ def calculate_next_state(state, action):
     pen_pos = [state[2] + math.cos(math.radians(state[0])) * 150, 300 - math.sin(math.radians(state[0])) * 150]
     
     if action == 1:
-        state[2] -= 6  # Decrease cart position
+        state[2] -= 4  # Decrease cart position
     elif action == 2:
-        state[2] += 6  # Increase cart position
+        state[2] += 4  # Increase cart position
+    
+    if state[2] > 800:
+        state[2] = 800
     # Action 2 does nothing (stay in place)
         
     dx = pen_pos[0] - state[2]
@@ -113,7 +116,7 @@ def calculate_next_state(state, action):
     
     # Calculate forces and acceleration
     torque = -mass * g * pen_l * math.cos(math.radians(state[0]))
-    angular_acceleration = torque / (mass * pen_l * pen_l)
+    angular_acceleration = torque / (mass * pen_l * pen_l) #   -g * cos(angle)
     state[1] += angular_acceleration * dt
     state[0] += math.degrees(state[1] * dt)
     state[0] %= 360

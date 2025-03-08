@@ -1,7 +1,8 @@
 import pygame
 import sys
 import math
-from pathfinder4 import get_action
+#from pathfinder4 import get_action
+from pathfinder5 import basic_pathfinder
 
 # Initialize Pygame
 pygame.init()
@@ -51,15 +52,16 @@ while running:
         cart_position += 6
 
     action = 0
-    action = get_action((angle, angular_velocity, cart_position))
+    action = basic_pathfinder((angle, angular_velocity, cart_position))
     if action == 1:
-        cart_position -= 6
+        cart_position -= 4
     elif action == 2:
-        cart_position += 6
-
+        cart_position += 4
+    if cart_position > 800:
+        cart_position = 800
     if cart_position < 0 or cart_position > 800:
+        pen_pos[0] = 400 - (cart_position - pen_pos[0])
         cart_position = 400
-        pen_pos[0] = cart_position + pen_pos[0]
 
     dx = pen_pos[0] - cart_position
     dy = 300 - pen_pos[1]

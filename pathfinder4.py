@@ -26,7 +26,7 @@ def increase_speed(state):
     speeds[0] = calculate_next_state(list(state), 0)[1]
     speeds[1] = calculate_next_state(list(state), 1)[1]
     speeds[2] = calculate_next_state(list(state), 2)[1]
-    return speeds.index(max(speeds))
+    return speeds.index(max(speeds)), speeds
 
 def increase_y_pos(state):
     alt_y = [0, 0, 0]
