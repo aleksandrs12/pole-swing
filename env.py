@@ -25,9 +25,9 @@ class PenEnv(Env):
 
     def step(self, action):
         if action == 1:
-            self.state[2] -= 6  # Decrease cart position
+            self.state[2] -= 1  # Decrease cart position
         elif action == 2:
-            self.state[2] += 6  # Increase cart position
+            self.state[2] += 1  # Increase cart position
         # Action 2 does nothing (stay in place)
 
         
@@ -39,7 +39,7 @@ class PenEnv(Env):
         self.total_reward += reward
         #print(reward, self.state[0], math.sin(math.radians(self.state[0])))
 
-        mass = 1 # kg
+        mass = 5 # kg
         pen_l = 1 # m
         g = 9.81  # gravitational acceleration in m/s²
         dt = 1/60  # time step (60 FPS)

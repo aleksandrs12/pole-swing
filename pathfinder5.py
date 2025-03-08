@@ -105,12 +105,14 @@ def basic_pathfinder(state):
             print(action, "Reduce speed")
             return action
         
-    print("Increase speed")
+    
     pref_dir = prefered_direction(state)
     action, speeds = increase_speed(state)
     if abs(speeds[pref_dir] - speeds[action]) < weight3:
         print(pref_dir, "Returning prefered direction")
         return pref_dir
+    
+    print("Increase speed")
     return action
     
     

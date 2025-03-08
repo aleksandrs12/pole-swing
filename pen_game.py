@@ -54,9 +54,9 @@ while running:
     action = 0
     action = basic_pathfinder((angle, angular_velocity, cart_position))
     if action == 1:
-        cart_position -= 4
+        cart_position -= 1
     elif action == 2:
-        cart_position += 4
+        cart_position += 1
     if cart_position > 800:
         cart_position = 800
     if cart_position < 0 or cart_position > 800:
@@ -72,7 +72,7 @@ while running:
     
     
 
-    mass = 1 # kg
+    mass = 5 # kg
     pen_l = 1 # m
     g = 9.81  # gravitational acceleration in m/s²
     dt = 1/60  # time step (60 FPS)
