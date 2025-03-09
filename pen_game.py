@@ -47,21 +47,22 @@ while running:
 
     keys = pygame.key.get_pressed()
     if keys[pygame.K_a]:
-        cart_position -= 6
+        cart_position -= 8
     if keys[pygame.K_d]:
-        cart_position += 6
+        cart_position += 8
 
     action = 0
     action = basic_pathfinder((angle, angular_velocity, cart_position))
     if action == 1:
-        cart_position -= 1
+        cart_position -= 3
     elif action == 2:
-        cart_position += 1
+        cart_position += 3
+        
+        
     if cart_position > 800:
         cart_position = 800
-    if cart_position < 0 or cart_position > 800:
-        pen_pos[0] = 400 - (cart_position - pen_pos[0])
-        cart_position = 400
+    if cart_position < 0:
+        cart_position = 0
 
     dx = pen_pos[0] - cart_position
     dy = 300 - pen_pos[1]
@@ -85,7 +86,7 @@ while running:
     angular_velocity += angular_acceleration * dt
     angle += math.degrees(angular_velocity * dt)
 
-    pen_pos = [cart_position + math.cos(math.radians(angle)) * 150, 300 - math.sin(math.radians(angle)) * 150]
+    pen_pos = [cart_position + math.cos(math.radians(angle)) * 150 * pen_l, 300 - math.sin(math.radians(angle)) * 150 * pen_l]
 
 
 

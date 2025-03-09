@@ -2,10 +2,6 @@ from pathfinder4 import within_range, balance_pendulum, passed_top, increase_y_p
 from env import calculate_next_state
 import math
 
-
-def rate_actions(state):
-    return (1, 2, 3)
-
 def crossed_angle(last_angle, current_angle, control_angle):
     last_angle %= 360
     current_angle %= 360
@@ -53,20 +49,6 @@ def find_required_velocity(state, mass=1, g=9.81, pen_l=1, dt=1/60):
     output[1] = -velocity
     ticks = [ticks[0] * dt, ticks[1] * dt]
     return output, ticks
-    
-seen = {}
-def func(state, action_history):
-    if state in seen:
-        return False, []
-    seen[state] = True
-    if balance_pendulum(state):
-        return True, action_history
-    
-    action_list = rate_actions(state)
-    for action in action_list:
-        action_history.append(action)
-        func(tuple(calculate_next_state(state, action)), action_history)
-        action_history.pop(-1)
         
 def prefered_direction(state):
     if state[2] > 400:
@@ -76,7 +58,7 @@ def prefered_direction(state):
     return 0
         
 def basic_pathfinder(state):
-    target_velocity, time_required = find_required_velocity(state)
+    target_velocity, time_required = find_required_velocity(state, pen_l=1)
     velocities = [calculate_next_state(list(state), 0)[1], calculate_next_state(list(state), 1)[1], calculate_next_state(list(state), 2)[1]]
     deviations = [min((abs(velocities[0] - target_velocity[0]), abs(velocities[0] - target_velocity[1]))), min((abs(velocities[1] - target_velocity[0]), abs(velocities[1] - target_velocity[1]))), min((abs(velocities[2] - target_velocity[0]), abs(velocities[2] - target_velocity[1])))]
     deviations = [abs(deviations[0]), abs(deviations[1]), abs(deviations[2])]
@@ -88,10 +70,6 @@ def basic_pathfinder(state):
     weight3 = 0.005
     if deviations[action]  < weight1:
         print(action, "By min deviation")
-        return action
-    action, alt_y = increase_y_pos(state)
-    if alt_y - math.sin(math.radians(state[0])) > weight2:
-        print(action, "By y pos increase")
         return action
     
     if state[1] < 0:
@@ -105,14 +83,14 @@ def basic_pathfinder(state):
             print(action, "Reduce speed")
             return action
         
-    
-    pref_dir = prefered_direction(state)
-    action, speeds = increase_speed(state)
-    if abs(speeds[pref_dir] - speeds[action]) < weight3:
-        print(pref_dir, "Returning prefered direction")
-        return pref_dir
+        
+    action, alt_y = increase_y_pos(state)
+    if alt_y - math.sin(math.radians(state[0])) > weight2:
+        print(action, "By y pos increase")
+        return action
     
     print("Increase speed")
+    action = increase_speed(state)
     return action
     
     
