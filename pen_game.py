@@ -2,7 +2,7 @@ import pygame
 import sys
 import math
 #from pathfinder4 import get_action
-from pathfinder5 import basic_pathfinder
+from pathfinder5 import basic_pathfinder, action_energy
 
 # Initialize Pygame
 pygame.init()
@@ -31,10 +31,11 @@ cart_position = 400
 angular_velocity = 0
 pen_pos = [cart_position, 300 + 150]
 
-depth = 0
+action = 0
+ticks = 0
 
 while running:
-    depth += 1
+    ticks += 1
     # Event handling
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -51,8 +52,10 @@ while running:
     if keys[pygame.K_d]:
         cart_position += 8
 
-    action = 0
-    action = basic_pathfinder((angle, angular_velocity, cart_position))
+    #action = 0
+    #action = basic_pathfinder((angle, angular_velocity, cart_position))
+    if ticks % 1 == 0:
+        action = action_energy((angle, angular_velocity, cart_position))
     if action == 1:
         cart_position -= 3
     elif action == 2:

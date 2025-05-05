@@ -56,8 +56,53 @@ def prefered_direction(state):
     if state[2] < 400:
         return 2
     return 0
+
+def find_required_energy(state, mass=1, g=9.81, pen_l=1, dt=1/60):
+    absolute_speed = math.pi * pen_l * 2 * (state[1] / 360 /dt) # calculate the absolute speed of the pendulum (it seems like state[1] is per tick so i had to adjust per that)
+    potential_energy = mass * g * pen_l * ((math.sin(math.radians(state[0])) + 1) / 2) # pretty obvious
+    kinetic_energy = 0.5 * mass * (absolute_speed ** 2) / 2 # pretty obvious except that i had to divide by 2, prob has to do with the fact i converted sinus to a value between 0 and 1
+    necessary_energy = mass * g * pen_l * ((math.sin(math.radians(90)) + 1) / 2)
+    energy_deficit = necessary_energy - (potential_energy + kinetic_energy)
+    #print("Energy deficit: ", energy_deficit)
+    
+    return energy_deficit
+
+def find_energy_distribution(state, action_update_frequency=1, mass=1, g=9.81, pen_l=1, dt=1/60):
+    absolute_speed = math.pi * pen_l * 2 * (state[1] / 360 /dt) # calculate the absolute speed of the pendulum (it seems like state[1] is per tick so i had to adjust per that)
+    potential_energy = mass * g * pen_l * ((math.sin(math.radians(state[0])) + 1) / 2) # pretty obvious
+    kinetic_energy = 0.5 * mass * (absolute_speed ** 2) / 2 # pretty obvious except that i had to divide by 2, prob has to do with the fact i converted sinus to a value between 0 and 1
+    if potential_energy == 0:
+        return 1
+    k_potential = potential_energy / (potential_energy + kinetic_energy) / 1.3 + (1 - (1/1.3))
+    
+    return k_potential
+
+def find_Nth_state(state, action, n, mass=1, g=9.81, pen_l=1, dt=1/60):
+    for i in range(n):
+        state = calculate_next_state(list(state), action)
+    return state
+
+def apply_coefficients(arr, coeffs):
+    return [arr[i] * coeffs[i] for i in range(len(arr))]
+
+def action_energy(state, action_update_frequency=1):
+    energy_deficit = find_required_energy(state)
+    deficits = [find_Nth_state(state, 0, action_update_frequency), find_Nth_state(state, 1, action_update_frequency), find_Nth_state(state, 2, action_update_frequency)]
+    deficits = list(map(find_required_energy, deficits))
+    deficits = list(map(abs, deficits))
+    print(deficits)
+    if math.sin(math.radians(state[0])) > 0.8:
+        deficit_k = [find_Nth_state(state, 0, action_update_frequency), find_Nth_state(state, 1, action_update_frequency), find_Nth_state(state, 2, action_update_frequency)]
+        deficit_k = list(map(find_energy_distribution, deficit_k))
+        deficit_k = list(map(abs, deficit_k))
+        print(energy_deficit)
+        deficits = apply_coefficients(deficits, deficit_k)
+    print(deficits)
+    action = deficits.index(min(deficits))
+    return action
         
 def basic_pathfinder(state):
+    find_required_energy(state)
     target_velocity, time_required = find_required_velocity(state, pen_l=1)
     velocities = [calculate_next_state(list(state), 0)[1], calculate_next_state(list(state), 1)[1], calculate_next_state(list(state), 2)[1]]
     deviations = [min((abs(velocities[0] - target_velocity[0]), abs(velocities[0] - target_velocity[1]))), min((abs(velocities[1] - target_velocity[0]), abs(velocities[1] - target_velocity[1]))), min((abs(velocities[2] - target_velocity[0]), abs(velocities[2] - target_velocity[1])))]
@@ -69,27 +114,27 @@ def basic_pathfinder(state):
     weight2 = 0
     weight3 = 0.005
     if deviations[action]  < weight1:
-        print(action, "By min deviation")
+        #print(action, "By min deviation")
         return action
     
     if state[1] < 0:
         if state[1] < min(target_velocity):
             action = reduce_speed(state)
-            print(action, "Reduce speed")
+            #print(action, "Reduce speed")
             return action
     if state[1] > 0:
         if state[1] > max(target_velocity):
             action = reduce_speed(state)
-            print(action, "Reduce speed")
+            #print(action, "Reduce speed")
             return action
         
         
     action, alt_y = increase_y_pos(state)
     if alt_y - math.sin(math.radians(state[0])) > weight2:
-        print(action, "By y pos increase")
+        #print(action, "By y pos increase")
         return action
     
-    print("Increase speed")
+    #print("Increase speed")
     action = increase_speed(state)
     return action
     
