@@ -85,24 +85,31 @@ def find_Nth_state(state, action, n, mass=1, g=9.81, pen_l=1, dt=1/60):
 def apply_coefficients(arr, coeffs):
     return [arr[i] * coeffs[i] for i in range(len(arr))]
 
+def min_angle_deviation(state):
+    deviations = [(calculate_next_state(state, 0)[0] - 90) % 360, (calculate_next_state(state, 1)[0] - 90) % 360, (calculate_next_state(state, 2)[0] - 90) % 360]
+    deviations = list(map(abs, deviations))
+    action = deviations.index(min(deviations))
+    return action
+
 def action_energy(state, action_update_frequency=1):
     energy_deficit = find_required_energy(state)
     deficits = [find_Nth_state(state, 0, action_update_frequency), find_Nth_state(state, 1, action_update_frequency), find_Nth_state(state, 2, action_update_frequency)]
     deficits = list(map(find_required_energy, deficits))
     deficits = list(map(abs, deficits))
     print(deficits)
-    if math.sin(math.radians(state[0])) > 0.8:
-        deficit_k = [find_Nth_state(state, 0, action_update_frequency), find_Nth_state(state, 1, action_update_frequency), find_Nth_state(state, 2, action_update_frequency)]
-        deficit_k = list(map(find_energy_distribution, deficit_k))
-        deficit_k = list(map(abs, deficit_k))
-        print(energy_deficit)
-        deficits = apply_coefficients(deficits, deficit_k)
+    if math.sin(math.radians(state[0])) > 0.98 and abs(energy_deficit) < 0.1:
+        target_velocity, time_required = find_required_velocity(state, pen_l=1)
+        velocities = [calculate_next_state(list(state), 0)[1], calculate_next_state(list(state), 1)[1], calculate_next_state(list(state), 2)[1]]
+        deviations = [min((abs(velocities[0] - target_velocity[0]), abs(velocities[0] - target_velocity[1]))), min((abs(velocities[1] - target_velocity[0]), abs(velocities[1] - target_velocity[1]))), min((abs(velocities[2] - target_velocity[0]), abs(velocities[2] - target_velocity[1])))]
+        deviations = [abs(deviations[0]), abs(deviations[1]), abs(deviations[2])]
+        return deviations.index(min(deviations))
     print(deficits)
     action = deficits.index(min(deficits))
     return action
+
+
         
 def basic_pathfinder(state):
-    find_required_energy(state)
     target_velocity, time_required = find_required_velocity(state, pen_l=1)
     velocities = [calculate_next_state(list(state), 0)[1], calculate_next_state(list(state), 1)[1], calculate_next_state(list(state), 2)[1]]
     deviations = [min((abs(velocities[0] - target_velocity[0]), abs(velocities[0] - target_velocity[1]))), min((abs(velocities[1] - target_velocity[0]), abs(velocities[1] - target_velocity[1]))), min((abs(velocities[2] - target_velocity[0]), abs(velocities[2] - target_velocity[1])))]
