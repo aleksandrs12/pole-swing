@@ -97,6 +97,8 @@ def action_energy(state, action_update_frequency=1):
     deficits = list(map(find_required_energy, deficits))
     deficits = list(map(abs, deficits))
     print(deficits)
+    
+    """Theorethically this if statement can be removed once friction is implemented"""
     if math.sin(math.radians(state[0])) > 0.98 and abs(energy_deficit) < 0.1:
         target_velocity, time_required = find_required_velocity(state, pen_l=1)
         velocities = [calculate_next_state(list(state), 0)[1], calculate_next_state(list(state), 1)[1], calculate_next_state(list(state), 2)[1]]
